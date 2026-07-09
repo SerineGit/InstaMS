@@ -7,7 +7,7 @@ const GIST_URL  = 'https://api.github.com/gists/' + GIST_ID;
 
 // ВПИШИ СЮДА СВОЙ GITHUB USERNAME (тот, на который зарегистрирован токен).
 // Только токен, привязанный именно к этому аккаунту, сможет включить редактирование.
-const OWNER_GITHUB_USERNAME = 'ВПИШИ_СВОЙ_GITHUB_USERNAME';
+const OWNER_GITHUB_USERNAME = 'https://github.com/SerineGit';
 
 function getToken() { return localStorage.getItem('ig_gist_token') || ''; }
 function setToken(t) { localStorage.setItem('ig_gist_token', t); }
