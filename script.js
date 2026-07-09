@@ -1,12 +1,10 @@
 // ─────────────────────────────────────────
-// GIST CONFIG — впиши свои значения
+// GIST CONFIG 
 // ─────────────────────────────────────────
 const GIST_ID   = 'https://gist.github.com/SerineGit/bd9be4e333493721652858e1fe341197';
 const GIST_FILE = 'posts_db.json';
 const GIST_URL  = 'https://api.github.com/gists/' + GIST_ID;
 
-// ВПИШИ СЮДА СВОЙ GITHUB USERNAME (тот, на который зарегистрирован токен).
-// Только токен, привязанный именно к этому аккаунту, сможет включить редактирование.
 const OWNER_GITHUB_USERNAME = 'https://github.com/SerineGit';
 
 function getToken() { return localStorage.getItem('ig_gist_token') || ''; }
