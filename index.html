@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmithMildredActress</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="handle">SmithMildredActress 🔒</div>
+    <div class="icons">
+      <span id="add-post-btn" title="Добавить пост">➕</span>
+      <span id="menu-btn" title="Меню / вход в редактирование">☰</span>
+    </div>
+  </div>
+
+  <div class="profile-header">
+    <div class="avatar" id="avatar-slot"></div>
+    <div class="profile-main">
+      <div class="username-row">
+        <span class="username">SmithMildredActress</span>
+      </div>
+      <div class="stats">
+        <div><b id="stat-posts">0</b> posts</div>
+        <div><b>102</b> followers</div>
+        <div><b>162</b> following</div>
+      </div>
+      <div class="bio">
+        <span class="name">Mildred Smith</span><br>
+        <span class="dim">Actress · заглушка описания профиля</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn">Edit profile</button>
+    <button class="btn">Share profile</button>
+    <button class="btn icon-btn">👤+</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active">▦</div>
+    <div class="tab">▷</div>
+    <div class="tab">🔁</div>
+    <div class="tab">👤</div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <!-- модалка просмотра поста -->
+  <div class="modal-backdrop" id="viewModalBackdrop">
+    <button class="close-btn" id="viewCloseBtn">×</button>
+    <div class="modal">
+      <div class="modal-media" id="viewModalMedia"></div>
+      <div class="modal-side">
+        <div class="modal-side-header">
+          <div class="avatar-sm"></div>
+          <div class="uname">SmithMildredActress</div>
+          <button class="post-edit-btn" id="viewEditBtn" title="Редактировать">✏️</button>
+          <button class="post-delete-btn" id="viewDeleteBtn" title="Удалить">✕</button>
+        </div>
+        <div class="modal-caption" id="viewModalCaption"></div>
+        <div class="modal-actions">
+          <span>♡</span>
+          <span>💬</span>
+          <span>➤</span>
+        </div>
+        <div class="modal-likes" id="viewModalLikes"></div>
+        <div class="modal-time" id="viewModalTime"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- модалка добавления / редактирования поста -->
+  <div class="form-modal" id="postFormModal">
+    <div class="modal-backdrop-shared" id="postFormBackdrop"></div>
+    <div class="form-panel">
+      <button class="bio-modal-close" id="postFormCloseBtn">✕</button>
+      <div class="form-title" id="pf-heading">Новый пост</div>
+      <div class="form-group">
+        <label class="form-label">Ссылка на картинку</label>
+        <input class="form-input" id="pf-image" type="text" placeholder="https://i.imgur.com/…">
+        <div id="pf-image-preview"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Подпись</label>
+        <textarea class="form-textarea" id="pf-caption" placeholder="Текст поста…"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Лайки</label><input class="form-input" id="pf-likes" type="number" placeholder="12"></div>
+        <div class="form-group"><label class="form-label">Когда</label><input class="form-input" id="pf-time" placeholder="2 hours ago"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" id="pf-cancel">Отмена</button>
+        <button class="btn-submit" id="pf-submit">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
