@@ -5,8 +5,27 @@ const GIST_ID   = 'https://gist.github.com/SerineGit/bd9be4e333493721652858e1fe3
 const GIST_FILE = 'posts_db.json';
 const GIST_URL  = 'https://api.github.com/gists/' + GIST_ID;
 
+// ВПИШИ СЮДА СВОЙ GITHUB USERNAME (тот, на который зарегистрирован токен).
+// Только токен, привязанный именно к этому аккаунту, сможет включить редактирование.
+const OWNER_GITHUB_USERNAME = 'ВПИШИ_СВОЙ_GITHUB_USERNAME';
+
 function getToken() { return localStorage.getItem('ig_gist_token') || ''; }
 function setToken(t) { localStorage.setItem('ig_gist_token', t); }
+function clearToken() { localStorage.removeItem('ig_gist_token'); }
+
+// Проверяет токен через GitHub API и возвращает логин владельца (или null, если токен нерабочий)
+async function verifyToken(token) {
+  try {
+    const r = await fetch('https://api.github.com/user', {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return j.login || null;
+  } catch (e) {
+    return null;
+  }
+}
 
 // ─────────────────────────────────────────
 // STATE
@@ -137,12 +156,30 @@ function createAdminBadge() {
   document.body.appendChild(badge);
 }
 
-document.getElementById('menu-btn').addEventListener('click', () => {
-  if (!getToken()) {
+document.getElementById('menu-btn').addEventListener('click', async () => {
+  // выключение режима — без проверок, это безопасно
+  if (adminMode) { toggleAdmin(); return; }
+
+  let token = getToken();
+  if (!token) {
     const t = prompt('Вставь свой GitHub токен (создаётся один раз, хранится только в этом браузере):');
     if (!t) return;
-    setToken(t.trim());
+    token = t.trim();
   }
+
+  const login = await verifyToken(token);
+  if (!login) {
+    alert('Этот токен не рабочий (не прошёл проверку GitHub). Редактирование не включено.');
+    clearToken();
+    return;
+  }
+  if (login.toLowerCase() !== OWNER_GITHUB_USERNAME.toLowerCase()) {
+    alert('Это не твой токен — редактирование доступно только владельцу аккаунта ' + OWNER_GITHUB_USERNAME + '.');
+    clearToken();
+    return;
+  }
+
+  setToken(token);
   toggleAdmin();
 });
 
