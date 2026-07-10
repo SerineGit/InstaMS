@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SmithMildredActress</title>
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <div class="topbar">
-    <div class="handle">SmithMildredActress 🔒</div>
+    <div class="handle" id="topbar-handle">SmithMildredActress</div>
     <div class="icons">
       <span id="add-post-btn" title="Добавить пост">➕</span>
       <span title="Меню">☰</span>
@@ -20,22 +20,23 @@
     <div class="avatar" id="avatar-slot"></div>
     <div class="profile-main">
       <div class="username-row">
-        <span class="username">SmithMildredActress</span>
+        <span class="username" id="profile-username">SmithMildredActress</span>
+        <span id="profile-badge"></span>
       </div>
       <div class="stats">
         <div><b id="stat-posts">0</b> posts</div>
-        <div><b>102</b> followers</div>
-        <div><b>162</b> following</div>
+        <div><b id="stat-followers">102</b> followers</div>
+        <div><b id="stat-following">162</b> following</div>
       </div>
       <div class="bio">
-        <span class="name">Mildred Smith</span><br>
-        <span class="dim">Actress · заглушка описания профиля</span>
+        <span class="name" id="profile-fullname">Mildred Smith</span><br>
+        <span class="dim" id="profile-bio">Actress · заглушка описания профиля</span>
       </div>
     </div>
   </div>
 
   <div class="action-row">
-    <button class="btn">Edit profile</button>
+    <button class="btn" id="edit-profile-btn">Edit profile</button>
     <button class="btn">Share profile</button>
     <button class="btn icon-btn">👤+</button>
   </div>
@@ -95,6 +96,46 @@
       <div class="form-actions">
         <button class="btn-cancel" id="pf-cancel">Отмена</button>
         <button class="btn-submit" id="pf-submit">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- модалка редактирования профиля -->
+  <div class="form-modal" id="profileFormModal">
+    <div class="modal-backdrop-shared" id="profileFormBackdrop"></div>
+    <div class="form-panel">
+      <button class="bio-modal-close" id="profileFormCloseBtn">✕</button>
+      <div class="form-title">Редактировать профиль</div>
+      <div class="form-group">
+        <label class="form-label">Ссылка на аватарку</label>
+        <input class="form-input" id="pfl-avatar" type="text" placeholder="https://i.imgur.com/…">
+        <div id="pfl-avatar-preview"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ник (username)</label>
+        <input class="form-input" id="pfl-username" type="text" placeholder="SmithMildredActress">
+      </div>
+      <div class="form-group">
+        <label class="form-label">
+          <input type="checkbox" id="pfl-verified" style="width:auto;margin-right:6px;">
+          Официальный аккаунт (синяя галочка)
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Полное имя</label>
+        <input class="form-input" id="pfl-fullname" type="text" placeholder="Mildred Smith">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Описание (био)</label>
+        <textarea class="form-textarea" id="pfl-bio" placeholder="Actress · …"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Followers</label><input class="form-input" id="pfl-followers" type="number" placeholder="102"></div>
+        <div class="form-group"><label class="form-label">Following</label><input class="form-input" id="pfl-following" type="number" placeholder="162"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" id="pfl-cancel">Отмена</button>
+        <button class="btn-submit" id="pfl-submit">Сохранить</button>
       </div>
     </div>
   </div>
