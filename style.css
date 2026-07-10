@@ -10,20 +10,13 @@
   --danger:#ed4956;
 }
 *{box-sizing:border-box;}
-html{
-  background:#e9e9e9;
-}
 body{
-  margin:12px auto;
+  margin:0 auto;
   background:var(--bg);
   color:var(--text);
   font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  max-width:400px;
-  border:1px solid var(--border);
-  border-radius:14px;
-  overflow:hidden;
-  box-shadow:0 4px 20px rgba(0,0,0,0.12);
-  padding-bottom:0;
+  max-width:540px;
+  padding-bottom:24px;
 }
 
 /* top bar */
