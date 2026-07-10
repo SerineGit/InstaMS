@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────
 // GIST CONFIG 
 // ─────────────────────────────────────────
-const GIST_ID   = 'https://gist.github.com/SerineGit/bd9be4e333493721652858e1fe341197';
+const GIST_ID = 'bd9be4e333493721652858e1fe341197';
 const GIST_FILE = 'posts_db.json';
 const GIST_URL  = 'https://api.github.com/gists/' + GIST_ID;
 
