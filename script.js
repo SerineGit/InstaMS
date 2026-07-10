@@ -6,10 +6,10 @@ const GIST_FILE = 'posts_db.json';
 const GIST_URL  = 'https://api.github.com/gists/' + GIST_ID;
 
 const OWNER_GITHUB_USERNAME = 'https://github.com/SerineGit';
-
 function getToken() { return localStorage.getItem('ig_gist_token') || ''; }
-function setToken(t) { localStorage.setItem('ig_gist_token', t); }
+function setToken(t) { localStorage.setItem('ig_gist_token', t); console.log('Токен сохранён. Обновите страницу.'); }
 function clearToken() { localStorage.removeItem('ig_gist_token'); }
+window.setToken = setToken; // вызывать из консоли браузера: setToken('твой_токен')
 
 // Проверяет токен через GitHub API и возвращает логин владельца (или null, если токен нерабочий)
 async function verifyToken(token) {
@@ -146,6 +146,7 @@ function toggleAdmin() {
 }
 
 function createAdminBadge() {
+  if (!getToken()) return; // без токена бейдж не появляется — обычные посетители его не видят
   const badge = document.createElement('div');
   badge.className = 'admin-badge off';
   badge.id = 'admin-badge';
@@ -154,32 +155,9 @@ function createAdminBadge() {
   document.body.appendChild(badge);
 }
 
-document.getElementById('menu-btn').addEventListener('click', async () => {
-  // выключение режима — без проверок, это безопасно
-  if (adminMode) { toggleAdmin(); return; }
-
-  let token = getToken();
-  if (!token) {
-    const t = prompt('Вставь свой GitHub токен (создаётся один раз, хранится только в этом браузере):');
-    if (!t) return;
-    token = t.trim();
-  }
-
-  const login = await verifyToken(token);
-  if (!login) {
-    alert('Этот токен не рабочий (не прошёл проверку GitHub). Редактирование не включено.');
-    clearToken();
-    return;
-  }
-  if (login.toLowerCase() !== OWNER_GITHUB_USERNAME.toLowerCase()) {
-    alert('Это не твой токен — редактирование доступно только владельцу аккаунта ' + OWNER_GITHUB_USERNAME + '.');
-    clearToken();
-    return;
-  }
-
-  setToken(token);
-  toggleAdmin();
-});
+// Кнопка ☰ больше не открывает prompt для ввода токена — вход возможен только
+// через консоль браузера (setToken('...')), как в календаре. Обычные посетители
+// вообще не видят способа стать администратором.
 
 // ─────────────────────────────────────────
 // RENDER GRID
@@ -327,10 +305,7 @@ async function deletePost(id) {
 // ADD-POST BUTTON (плюсик в шапке)
 // ─────────────────────────────────────────
 document.getElementById('add-post-btn').addEventListener('click', () => {
-  if (!adminMode) {
-    alert('Сначала включи режим редактирования: нажми ☰ и введи токен.');
-    return;
-  }
+  if (!adminMode) return; // для обычных посетителей кнопка тихо ничего не делает
   openPostForm(null);
 });
 
@@ -345,6 +320,15 @@ document.addEventListener('keydown', (e) => {
 // INIT
 // ─────────────────────────────────────────
 async function init() {
+  // если в этом браузере уже лежит токен — проверяем, что он рабочий и принадлежит именно тебе.
+  // если нет — тихо стираем его, бейдж администратора тогда не появится.
+  const token = getToken();
+  if (token) {
+    const login = await verifyToken(token);
+    if (!login || login.toLowerCase() !== OWNER_GITHUB_USERNAME.toLowerCase()) {
+      clearToken();
+    }
+  }
   createAdminBadge();
   await loadFromGist();
   renderGrid();
