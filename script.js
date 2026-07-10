@@ -7,6 +7,7 @@ const GIST_URL  = 'https://api.github.com/gists/' + GIST_ID;
 
 const OWNER_GITHUB_USERNAME = 'SerineGit';
 
+
 function getToken() { return localStorage.getItem('ig_gist_token') || ''; }
 function setToken(t) { localStorage.setItem('ig_gist_token', t); console.log('Токен сохранён. Обновите страницу.'); }
 function clearToken() { localStorage.removeItem('ig_gist_token'); }
@@ -185,17 +186,15 @@ function createAdminBadge() {
 // ─────────────────────────────────────────
 // RENDER PROFILE
 // ─────────────────────────────────────────
-const VERIFIED_SVG = `<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-  <path fill="#0095f6" d="M19.994 3.02c-1.469 0-2.848.673-3.756 1.825l-1.812 2.294-2.883-.362a4.937 4.937 0 0 0-4.985 2.883l-1.187 2.665-2.665 1.187a4.937 4.937 0 0 0-2.883 4.985l.362 2.883-2.294 1.812A4.937 4.937 0 0 0 0 27.28c0 1.469.673 2.848 1.825 3.756l2.294 1.812-.362 2.883a4.937 4.937 0 0 0 2.883 4.985l2.665 1.187 1.187 2.665a4.937 4.937 0 0 0 4.985 2.883l2.883-.362 1.812 2.294a4.937 4.937 0 0 0 7.512 0l1.812-2.294 2.883.362a4.937 4.937 0 0 0 4.985-2.883l1.187-2.665 2.665-1.187a4.937 4.937 0 0 0 2.883-4.985l-.362-2.883 2.294-1.812A4.937 4.937 0 0 0 40 27.28c0-1.469-.673-2.848-1.825-3.756l-2.294-1.812.362-2.883a4.937 4.937 0 0 0-2.883-4.985l-2.665-1.187-1.187-2.665a4.937 4.937 0 0 0-4.985-2.883l-2.883.362-1.812-2.294A4.937 4.937 0 0 0 19.994 3.02Z" transform="translate(0 -3)"></path>
-  <path fill="#fff" d="M17.5 26.5l-4-4 1.5-1.5 2.5 2.5 6.5-6.5 1.5 1.5z"></path>
+const VERIFIED_SVG = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <rect x="3" y="3" width="18" height="18" rx="5" fill="#3897f0" transform="rotate(22.5 12 12)"></rect>
+  <rect x="3" y="3" width="18" height="18" rx="5" fill="#3897f0" transform="rotate(-22.5 12 12)"></rect>
+  <path d="M8.3 12.3l2.6 2.6 5-5" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
 </svg>`;
 
 function renderProfile() {
   const p = { ...DEFAULT_PROFILE, ...(db.profile || {}) };
 
-  document.getElementById('topbar-handle').textContent = p.username;
-  document.getElementById('topbar-badge').innerHTML = p.verified
-    ? `<span class="verified-badge">${VERIFIED_SVG}</span>` : '';
   document.getElementById('profile-username').textContent = p.username;
   document.getElementById('profile-badge').innerHTML = p.verified
     ? `<span class="verified-badge">${VERIFIED_SVG}</span>` : '';
