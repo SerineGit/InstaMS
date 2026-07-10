@@ -52,6 +52,18 @@ function uid() { return '_' + Math.random().toString(36).substr(2, 9); }
 function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function getPost(id) { return db.posts.find(p => p.id === id); }
 
+// Форматирует число в стиле инстаграма: 2470 -> "2,470", 71200 -> "71.2K", 10000000 -> "10M"
+function formatCount(n) {
+  n = Number(n) || 0;
+  if (n < 10000) return n.toLocaleString('en-US');
+  if (n < 1000000) {
+    const v = (n / 1000).toFixed(1).replace(/\.0$/, '');
+    return v + 'K';
+  }
+  const v = (n / 1000000).toFixed(1).replace(/\.0$/, '');
+  return v + 'M';
+}
+
 // ─────────────────────────────────────────
 // SAVE STATUS INDICATOR
 // ─────────────────────────────────────────
@@ -182,13 +194,15 @@ function renderProfile() {
   const p = { ...DEFAULT_PROFILE, ...(db.profile || {}) };
 
   document.getElementById('topbar-handle').textContent = p.username;
+  document.getElementById('topbar-badge').innerHTML = p.verified
+    ? `<span class="verified-badge">${VERIFIED_SVG}</span>` : '';
   document.getElementById('profile-username').textContent = p.username;
   document.getElementById('profile-badge').innerHTML = p.verified
     ? `<span class="verified-badge">${VERIFIED_SVG}</span>` : '';
   document.getElementById('profile-fullname').textContent = p.fullName;
   document.getElementById('profile-bio').textContent = p.bio;
-  document.getElementById('stat-followers').textContent = p.followers;
-  document.getElementById('stat-following').textContent = p.following;
+  document.getElementById('stat-followers').textContent = formatCount(p.followers);
+  document.getElementById('stat-following').textContent = formatCount(p.following);
 
   const avatarSlot = document.getElementById('avatar-slot');
   avatarSlot.innerHTML = p.avatar
