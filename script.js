@@ -7,7 +7,6 @@ const GIST_URL  = 'https://api.github.com/gists/' + GIST_ID;
 
 const OWNER_GITHUB_USERNAME = 'SerineGit';
 
-
 function getToken() { return localStorage.getItem('ig_gist_token') || ''; }
 function setToken(t) { localStorage.setItem('ig_gist_token', t); console.log('Токен сохранён. Обновите страницу.'); }
 function clearToken() { localStorage.removeItem('ig_gist_token'); }
@@ -52,6 +51,12 @@ let editingId = null;     // id поста, который сейчас реда
 function uid() { return '_' + Math.random().toString(36).substr(2, 9); }
 function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function getPost(id) { return db.posts.find(p => p.id === id); }
+
+// Подсвечивает #хэштеги синим (сначала экранирует HTML, потом оборачивает хэштеги в span)
+function formatCaption(text) {
+  const safe = esc(text);
+  return safe.replace(/#[\wа-яёА-ЯЁ0-9_]+/g, (tag) => `<span class="hashtag">${tag}</span>`);
+}
 
 // Форматирует число в стиле инстаграма: 2470 -> "2,470", 71200 -> "71.2K", 10000000 -> "10M"
 function formatCount(n) {
@@ -199,7 +204,7 @@ function renderProfile() {
   document.getElementById('profile-badge').innerHTML = p.verified
     ? `<span class="verified-badge">${VERIFIED_SVG}</span>` : '';
   document.getElementById('profile-fullname').textContent = p.fullName;
-  document.getElementById('profile-bio').textContent = p.bio;
+  document.getElementById('profile-bio').innerHTML = formatCaption(p.bio);
   document.getElementById('stat-followers').textContent = formatCount(p.followers);
   document.getElementById('stat-following').textContent = formatCount(p.following);
 
@@ -311,7 +316,7 @@ function openViewModal(id) {
     ? `<img src="${esc(post.image)}" alt="post">`
     : `пусто — добавь картинку`;
   document.getElementById('viewModalCaption').innerHTML =
-    `<span class="name">SmithMildredActress</span>${esc(post.caption || '')}`;
+    `<span class="name">SmithMildredActress</span>${formatCaption(post.caption || '')}`;
   document.getElementById('viewModalLikes').textContent = `${post.likes || 0} likes`;
   document.getElementById('viewModalTime').textContent = post.time || '';
   document.getElementById('viewModalBackdrop').classList.add('open');
