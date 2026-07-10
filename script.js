@@ -5,7 +5,7 @@ const GIST_ID   = 'https://gist.github.com/SerineGit/bd9be4e333493721652858e1fe3
 const GIST_FILE = 'posts_db.json';
 const GIST_URL  = 'https://api.github.com/gists/' + GIST_ID;
 
-const OWNER_GITHUB_USERNAME = 'https://github.com/SerineGit';
+const OWNER_GITHUB_USERNAME = 'SerineGit';
 function getToken() { return localStorage.getItem('ig_gist_token') || ''; }
 function setToken(t) { localStorage.setItem('ig_gist_token', t); console.log('Токен сохранён. Обновите страницу.'); }
 function clearToken() { localStorage.removeItem('ig_gist_token'); }
