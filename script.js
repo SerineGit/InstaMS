@@ -6,6 +6,7 @@ const GIST_FILE = 'posts_db.json';
 const GIST_URL  = 'https://api.github.com/gists/' + GIST_ID;
 
 const OWNER_GITHUB_USERNAME = 'SerineGit';
+
 function getToken() { return localStorage.getItem('ig_gist_token') || ''; }
 function setToken(t) { localStorage.setItem('ig_gist_token', t); console.log('Токен сохранён. Обновите страницу.'); }
 function clearToken() { localStorage.removeItem('ig_gist_token'); }
@@ -28,7 +29,16 @@ async function verifyToken(token) {
 // ─────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────
-let db = { posts: [] };
+let db = { posts: [], profile: {} };
+const DEFAULT_PROFILE = {
+  avatar: '',
+  username: 'SmithMildredActress',
+  verified: false,
+  fullName: 'Mildred Smith',
+  bio: 'Actress · заглушка описания профиля',
+  followers: 102,
+  following: 162
+};
 let adminMode = false;
 let lastSnapshot = '';
 let saving = false;
@@ -84,6 +94,7 @@ async function loadFromGist() {
     if (!content) return false;
     const parsed = JSON.parse(content);
     if (!parsed.posts) return false;
+    if (!parsed.profile) parsed.profile = { ...DEFAULT_PROFILE };
     const snap = JSON.stringify(parsed);
     if (snap === lastSnapshot) return false;
     lastSnapshot = snap;
@@ -127,7 +138,7 @@ async function saveToGist() {
 async function poll() {
   if (!saving) {
     const changed = await loadFromGist();
-    if (changed) renderGrid();
+    if (changed) { renderGrid(); renderProfile(); }
   }
   setTimeout(poll, 5000);
 }
@@ -158,6 +169,77 @@ function createAdminBadge() {
 // Кнопка ☰ больше не открывает prompt для ввода токена — вход возможен только
 // через консоль браузера (setToken('...')), как в календаре. Обычные посетители
 // вообще не видят способа стать администратором.
+
+// ─────────────────────────────────────────
+// RENDER PROFILE
+// ─────────────────────────────────────────
+const VERIFIED_SVG = `<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+  <path fill="#0095f6" d="M19.994 3.02c-1.469 0-2.848.673-3.756 1.825l-1.812 2.294-2.883-.362a4.937 4.937 0 0 0-4.985 2.883l-1.187 2.665-2.665 1.187a4.937 4.937 0 0 0-2.883 4.985l.362 2.883-2.294 1.812A4.937 4.937 0 0 0 0 27.28c0 1.469.673 2.848 1.825 3.756l2.294 1.812-.362 2.883a4.937 4.937 0 0 0 2.883 4.985l2.665 1.187 1.187 2.665a4.937 4.937 0 0 0 4.985 2.883l2.883-.362 1.812 2.294a4.937 4.937 0 0 0 7.512 0l1.812-2.294 2.883.362a4.937 4.937 0 0 0 4.985-2.883l1.187-2.665 2.665-1.187a4.937 4.937 0 0 0 2.883-4.985l-.362-2.883 2.294-1.812A4.937 4.937 0 0 0 40 27.28c0-1.469-.673-2.848-1.825-3.756l-2.294-1.812.362-2.883a4.937 4.937 0 0 0-2.883-4.985l-2.665-1.187-1.187-2.665a4.937 4.937 0 0 0-4.985-2.883l-2.883.362-1.812-2.294A4.937 4.937 0 0 0 19.994 3.02Z" transform="translate(0 -3)"></path>
+  <path fill="#fff" d="M17.5 26.5l-4-4 1.5-1.5 2.5 2.5 6.5-6.5 1.5 1.5z"></path>
+</svg>`;
+
+function renderProfile() {
+  const p = { ...DEFAULT_PROFILE, ...(db.profile || {}) };
+
+  document.getElementById('topbar-handle').textContent = p.username;
+  document.getElementById('profile-username').textContent = p.username;
+  document.getElementById('profile-badge').innerHTML = p.verified
+    ? `<span class="verified-badge">${VERIFIED_SVG}</span>` : '';
+  document.getElementById('profile-fullname').textContent = p.fullName;
+  document.getElementById('profile-bio').textContent = p.bio;
+  document.getElementById('stat-followers').textContent = p.followers;
+  document.getElementById('stat-following').textContent = p.following;
+
+  const avatarSlot = document.getElementById('avatar-slot');
+  avatarSlot.innerHTML = p.avatar
+    ? `<img src="${esc(p.avatar)}" alt="avatar" onerror="this.remove()">`
+    : '';
+}
+
+document.getElementById('edit-profile-btn').addEventListener('click', () => {
+  if (!adminMode) return; // для обычных посетителей — тихо ничего не делает
+  openProfileForm();
+});
+
+function openProfileForm() {
+  const p = { ...DEFAULT_PROFILE, ...(db.profile || {}) };
+  document.getElementById('pfl-avatar').value = p.avatar || '';
+  document.getElementById('pfl-username').value = p.username || '';
+  document.getElementById('pfl-verified').checked = !!p.verified;
+  document.getElementById('pfl-fullname').value = p.fullName || '';
+  document.getElementById('pfl-bio').value = p.bio || '';
+  document.getElementById('pfl-followers').value = p.followers || 0;
+  document.getElementById('pfl-following').value = p.following || 0;
+  updateAvatarPreview();
+  document.getElementById('profileFormModal').classList.add('open');
+}
+function closeProfileForm() {
+  document.getElementById('profileFormModal').classList.remove('open');
+}
+function updateAvatarPreview() {
+  const url = document.getElementById('pfl-avatar').value.trim();
+  const prev = document.getElementById('pfl-avatar-preview');
+  prev.innerHTML = url ? `<img src="${esc(url)}" onerror="this.style.display='none'">` : '';
+}
+document.getElementById('pfl-avatar').addEventListener('input', updateAvatarPreview);
+document.getElementById('profileFormCloseBtn').addEventListener('click', closeProfileForm);
+document.getElementById('pfl-cancel').addEventListener('click', closeProfileForm);
+document.getElementById('profileFormBackdrop').addEventListener('click', closeProfileForm);
+
+document.getElementById('pfl-submit').addEventListener('click', async () => {
+  db.profile = {
+    avatar: document.getElementById('pfl-avatar').value.trim(),
+    username: document.getElementById('pfl-username').value.trim() || DEFAULT_PROFILE.username,
+    verified: document.getElementById('pfl-verified').checked,
+    fullName: document.getElementById('pfl-fullname').value.trim(),
+    bio: document.getElementById('pfl-bio').value.trim(),
+    followers: parseInt(document.getElementById('pfl-followers').value, 10) || 0,
+    following: parseInt(document.getElementById('pfl-following').value, 10) || 0
+  };
+  await saveToGist();
+  closeProfileForm();
+  renderProfile();
+});
 
 // ─────────────────────────────────────────
 // RENDER GRID
@@ -313,7 +395,7 @@ document.getElementById('add-post-btn').addEventListener('click', () => {
 // KEYBOARD
 // ─────────────────────────────────────────
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') { closeViewModal(); closePostForm(); }
+  if (e.key === 'Escape') { closeViewModal(); closePostForm(); closeProfileForm(); }
 });
 
 // ─────────────────────────────────────────
@@ -331,6 +413,7 @@ async function init() {
   }
   createAdminBadge();
   await loadFromGist();
+  renderProfile();
   renderGrid();
   poll();
 }
